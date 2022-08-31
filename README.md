@@ -1,2 +1,4 @@
 # as24
-Fetch ads for a car model for data analysis
+Fetch ads for a car model for data analysis.
+
+This service downloads the ads from a popular used car listings site and saves the data.
