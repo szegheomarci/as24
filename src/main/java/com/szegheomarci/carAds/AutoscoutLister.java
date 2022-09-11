@@ -49,7 +49,7 @@ public class AutoscoutLister {
 		url = "https://www.autoscout24.com/lst/bmw/z3?sort=price&desc=0&ustate=N%2CU&size=20&fregto=2004&fregfrom=2002&body=2&atype=C&page=";
 		System.out.println("Querying 2002");
 		Parser(url,1,"2002");*/
-		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=1992&fregto=1996&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
+	/*	url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=1992&fregto=1996&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
 		System.out.println("Querying 1996");
 		Parser(url,1,"1996");
 		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=1997&fregto=1997&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
@@ -67,18 +67,18 @@ public class AutoscoutLister {
 		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=2001&fregto=2001&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
 		System.out.println("Querying 2001");
 		Parser(url,1,"2001");
-		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=2002&fregto=2006&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
+	*/	url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=2002&fregto=2006&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
 		System.out.println("Querying 2002");
 		Parser(url,1,"2002");
 		
 
-		try {
-			TimeUnit.SECONDS.sleep(10);
+	/*	try {
+			TimeUnit.SECONDS.sleep(600);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+*/
 		return results;
 	}
 	
