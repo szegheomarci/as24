@@ -30,7 +30,7 @@ public class Control {
 	    try {
 	        //create a temporary file
 	        String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-	        File logFile = new File("/tmp/carads/" + timeLog + "as");
+	        File logFile = new File("./" + timeLog + "as");
 
 	        // This will output the full path where the file will be written to...
 	        System.out.println(logFile.getCanonicalPath());

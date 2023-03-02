@@ -49,7 +49,7 @@ public class AutoscoutLister {
 		url = "https://www.autoscout24.com/lst/bmw/z3?sort=price&desc=0&ustate=N%2CU&size=20&fregto=2004&fregfrom=2002&body=2&atype=C&page=";
 		System.out.println("Querying 2002");
 		Parser(url,1,"2002");*/
-	/*	url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=1992&fregto=1996&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
+		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=1992&fregto=1996&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
 		System.out.println("Querying 1996");
 		Parser(url,1,"1996");
 		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=1997&fregto=1997&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
@@ -67,7 +67,7 @@ public class AutoscoutLister {
 		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=2001&fregto=2001&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
 		System.out.println("Querying 2001");
 		Parser(url,1,"2001");
-	*/	url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=2002&fregto=2006&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
+		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=2002&fregto=2006&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
 		System.out.println("Querying 2002");
 		Parser(url,1,"2002");
 		
@@ -188,7 +188,7 @@ public class AutoscoutLister {
 			//car.setTitle(ad.select("h2.cldt-summary-makemodel").first().text());
 			car.setTitle(ad.select("h2").first().text());
 			//subtitle
-			ad.select("h2").next();
+			//ad.select("h2").next();
 			//car.setSubtitle(ad.select("h2").text());
 			//subtitle
 			car.setSubtitle(ad.select("span").first().text());
@@ -197,8 +197,9 @@ public class AutoscoutLister {
 			//car.setPrice(ad.select("span.cldt-price").first().text());
 			//car.setPrice(ad.select("span.css-113e8xo").first().text());
 			//car.setPrice(ad.select("span.css-1b5kt8d").first().text());
-			car.setPrice(ad.select("p[data-testid=\"regular-price\"]").first().text());
-			Document details = Jsoup.parseBodyFragment(item.select("div.VehicleDetailTable_container__mUUbY").first().html());
+			//car.setPrice(ad.select("p[data-testid=\"regular-price\"]").first().text());
+			car.setPrice(ad.select("p.Price_price__WZayw").first().text());
+			Document details = Jsoup.parseBodyFragment(item.select("div.VehicleDetailTableNewDesign_container__wH_QF").first().html());
 			Elements listItems = details.getElementsByTag("span");
 			Iterator<Element> listIterator = listItems.iterator();
 				//odo
@@ -206,7 +207,7 @@ public class AutoscoutLister {
 				//DoP
 				car.setProductionDate(listIterator.next().text());
 				//engine
-				listItems.next();
+				//listItems.next();
 				car.setEngine(listIterator.next().text());	
             //odo
 		    //car.setOdometer(ad.select("li[data-type=mileage]").first().text());
@@ -225,6 +226,8 @@ public class AutoscoutLister {
 				car.setDealer("private");
 				car.setZipCity(ad.select("span.styles_private__mUdme").first().text().substring(16));
 			}*/
+
+
 			Elements dealerdata = item.select("div.SellerInfo_wrapper__mLtya");
 			if(!dealerdata.isEmpty()){
 				car.setDealer(dealerdata.first().select("span.SellerInfo_name__yjUE6").text() + "");
@@ -233,7 +236,6 @@ public class AutoscoutLister {
 				car.setDealer("private");
 				car.setZipCity(ad.select("span.SellerInfo_private__JCxcm").first().text().substring(16));
 			}
-			
 			
 			/*
 			Element sellerInfo = item.select("div.css-r5sw3y").first();
