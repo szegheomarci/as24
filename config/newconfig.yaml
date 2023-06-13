@@ -1,0 +1,8 @@
+datasource:
+  site: autoscout
+  urls:
+    - "https://www.autoscout24.com/lst/ferrari/308?&fregfrom=1981&fregto=1985&ustate=N%2CU&size=20&page="
+output:
+  - type: file
+    options:
+      format: hsv
