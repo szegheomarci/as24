@@ -1,4 +1,4 @@
-package com.szegheomarci.carAds;
+package com.szegheomarci.carAds.model;
 
 
 public class Car {
