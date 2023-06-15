@@ -1,20 +1,37 @@
 package com.szegheomarci.carAds;
 
+import com.szegheomarci.carAds.model.Car;
+
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 
 public class Control {
 	private static ArrayList<Car> autoScoutResults;
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
+
+		// read the configuration
+		/*try {
+			AppConfig config = new AppConfig();
+			List<String> asUrls = config.getAutoscouturls();
+			int i = 0;
+			while (i < asUrls.size()) {
+				String url = asUrls.get(i);
+				System.out.println("fetch: " + url);
+				//Parser(url,1,"URL[]");
+				i++;
+			}
+		//} catch (FileNotFoundException e) {
+		//	System.out.println("config file with urls not found");
+		//}*/
 		AutoScoutLister();
 		exportToTextFile();
 	}
@@ -24,7 +41,8 @@ public class Control {
 		autoScoutResults = new ArrayList<Car>();
 		autoScoutResults = as.Lister();
 	}
-	
+
+
 	private static void exportToTextFile(){
 		BufferedWriter writer = null;
 	    try {
