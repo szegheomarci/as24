@@ -1,2 +1,4 @@
 202*
 /target/
+/out/
+/config/config.yaml

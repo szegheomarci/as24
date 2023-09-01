@@ -1,0 +1,13 @@
+datasource:
+  reader: AUTOSCOUTREADER
+  urls:
+    #- "https://www.autoscout24.com/lst/ferrari/308?&fregfrom=1981&fregto=1985&ustate=N%2CU&size=20&page="
+    - "https://www.autoscout24.com/lst/ferrari/monza?atype=C&page="
+output:
+  #- type: file
+  #  format: dsv
+  #  delimiter: "####"
+  - type: file
+    format: json
+  - type: kafka
+

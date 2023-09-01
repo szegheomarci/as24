@@ -1,15 +1,12 @@
 package com.szegheomarci.carAds;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.szegheomarci.carAds.model.Car;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,64 +16,21 @@ public class AutoscoutLister {
 	private ArrayList<Car> results;
 	
 	public ArrayList<Car> Lister(){
-		String url;		
+		//Maximum 400 results returned for a search
 		results = new ArrayList<Car>();
-		
-		//Maximum 400 results returned
-		/*old
-		 * https://www.autoscout24.com/lst/bmw/z3?sort=price&desc=0&ustate=N%2CU&size=20&fregto=1996&fregfrom=1992&body=2&atype=C&page=%221%22
-         * https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=1992&fregto=1996&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20
-		 */
-		/*
-		url = "https://www.autoscout24.com/lst/bmw/z3?sort=price&desc=0&ustate=N%2CU&size=20&fregto=1996&fregfrom=1992&body=2&atype=C&page=";
-		System.out.println("Querying 1996");
-		Parser(url,1,"1996");
-		url = "https://www.autoscout24.com/lst/bmw/z3?sort=price&desc=0&ustate=N%2CU&size=20&fregto=1997&fregfrom=1997&body=2&atype=C&page=";
-		System.out.println("Querying 1997");
-		Parser(url,1,"1997");
-		url = "https://www.autoscout24.com/lst/bmw/z3?sort=price&desc=0&ustate=N%2CU&size=20&fregto=1998&fregfrom=1998&body=2&atype=C&page=";
-		System.out.println("Querying 1998");
-		Parser(url,1,"1998");
-		url = "https://www.autoscout24.com/lst/bmw/z3?sort=price&desc=0&ustate=N%2CU&size=20&fregto=1999&fregfrom=1999&body=2&atype=C&page=";
-		System.out.println("Querying 1999");
-		Parser(url,1,"1999");
-		url = "https://www.autoscout24.com/lst/bmw/z3?sort=price&desc=0&ustate=N%2CU&size=20&fregto=2000&fregfrom=2000&body=2&atype=C&page=";
-		System.out.println("Querying 2000");
-		Parser(url,1,"2000");
-		url = "https://www.autoscout24.com/lst/bmw/z3?sort=price&desc=0&ustate=N%2CU&size=20&fregto=2001&fregfrom=2001&body=2&atype=C&page=";
-		System.out.println("Querying 2001");
-		Parser(url,1,"2001");
-		url = "https://www.autoscout24.com/lst/bmw/z3?sort=price&desc=0&ustate=N%2CU&size=20&fregto=2004&fregfrom=2002&body=2&atype=C&page=";
-		System.out.println("Querying 2002");
-		Parser(url,1,"2002");*/
-		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=1992&fregto=1996&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
-		System.out.println("Querying 1996");
-		Parser(url,1,"1996");
-		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=1997&fregto=1997&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
-		System.out.println("Querying 1997");
-		Parser(url,1,"1997");
-		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=1998&fregto=1998&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
-		System.out.println("Querying 1998");
-		Parser(url,1,"1998");
-		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=1999&fregto=1999&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
-		System.out.println("Querying 1999");
-		Parser(url,1,"1999");
-		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=2000&fregto=2000&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
-		System.out.println("Querying 2000");
-		Parser(url,1,"2000");
-		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=2001&fregto=2001&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
-		System.out.println("Querying 2001");
-		Parser(url,1,"2001");
-		url = "https://www.autoscout24.com/lst/bmw/z3/bt_convertible?fregfrom=2002&fregto=2006&body=2&sort=price&desc=0&atype=C&ustate=N%2CU&size=20&page=";
-		System.out.println("Querying 2002");
-		Parser(url,1,"2002");
-		
-
-	/*	try {
-			TimeUnit.SECONDS.sleep(600);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+/*
+		try {
+			AppConfig config = new AppConfig();
+			List<String> asUrls = config.getAutoscouturls();
+			int i = 0;
+			while (i < asUrls.size()) {
+				String url = asUrls.get(i);
+				System.out.println("fetch: " + url);
+				Parser(url,1,"URL[]");
+				i++;
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println("config file with urls not found");
 		}
 */
 		return results;
@@ -85,38 +39,8 @@ public class AutoscoutLister {
 	private void Parser(String url, Integer page, String alias){
 		String newURL = url + page;
 		Document doc = loadPage(newURL);
-	/*
-		try {
-			doc = Jsoup.connect(newURL).get();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("Failed getting page " + newURL);
-			System.out.println("Trying again...");
-			try {
-				doc = Jsoup.connect(newURL).get();
-			} catch (IOException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-				System.out.println("Failed getting page " + newURL);
-				System.out.println("Trying for the second time...");
-				try {
-					doc = Jsoup.connect(newURL).get();
-				} catch (IOException e3) {
-					// TODO Auto-generated catch block
-					e3.printStackTrace();
-					System.out.println("Failed getting page " + newURL);
-					System.out.println("Giving up.");
-					return;
-				}
-			}
-		}
-		*/
-		//System.out.println(newURL);
-		//System.out.println("talalat: " + doc.select("class=\" cl-filters-summary-counter\"").text());
-		//if(doc==null) System.out.println("doc is null");
+
 		Integer numResults=0;
-		String nextdata="";
 		try {//<div class="ListHeader_top__jY34N" style="border-bottom:0"><h1><span><span>79</span> <span>Offers</span></span> <b
 			//numResults = Integer.valueOf(doc.select("span[class=css-1efi8gv]").first().text().replaceAll("[^\\d.]", ""));
 			numResults = Integer.valueOf(doc.select("div.ListHeader_top__jY34N").first().selectFirst("h1").selectFirst("span").text().replaceAll("[^\\d.]", ""));
@@ -167,7 +91,7 @@ public class AutoscoutLister {
 			}
 		}
 		if (numResults==0) {System.out.println(alias + ": 0"); return;}
-		System.out.println(page + " res:" + numResults);
+		System.out.println(numResults + " found, processing page" + page);
 				
 		//Elements resultItems = doc.select("div.cl-list-element");
 		//Elements resultItems = doc.select("div.emtvtq414");
@@ -199,13 +123,18 @@ public class AutoscoutLister {
 			//car.setPrice(ad.select("span.css-1b5kt8d").first().text());
 			//car.setPrice(ad.select("p[data-testid=\"regular-price\"]").first().text());
 			car.setPrice(ad.select("p.Price_price__WZayw").first().text());
-			Document details = Jsoup.parseBodyFragment(item.select("div.VehicleDetailTableNewDesign_container__wH_QF").first().html());
+			//Document details = Jsoup.parseBodyFragment(item.select("div.VehicleDetailTableNewDesign_container__wH_QF").first().html());
+			Document details = Jsoup.parseBodyFragment(item.select("div.VehicleDetailTable_container__mUUbY").first().html());
 			Elements listItems = details.getElementsByTag("span");
 			Iterator<Element> listIterator = listItems.iterator();
 				//odo
 				car.setOdometer(listIterator.next().text());
+				//transmission
+			    listIterator.next();
 				//DoP
 				car.setProductionDate(listIterator.next().text());
+				//fuel
+			    listIterator.next();
 				//engine
 				//listItems.next();
 				car.setEngine(listIterator.next().text());	

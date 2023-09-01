@@ -1,30 +1,52 @@
 package com.szegheomarci.carAds;
 
+import com.szegheomarci.carAds.controller.datasource.DatasourceReader;
+import com.szegheomarci.carAds.controller.output.OutputWriter;
+import com.szegheomarci.carAds.model.Car;
+
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 
-public class Control {
+public class CarAds {
 	private static ArrayList<Car> autoScoutResults;
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
-		AutoScoutLister();
-		exportToTextFile();
-	}
+
+		// read the configuration
+		try {
+			AppConfig config = new AppConfig();
+			DatasourceReader datasourceReader = config.getDatasourceReader();
+			datasourceReader.readSource();
+			ArrayList<Car> ads = datasourceReader.getResults();
+			for (OutputWriter outputWriter : config.getOutputWriters()) {
+				outputWriter.generateOutput(ads);
+				TimeUnit.SECONDS.sleep(1);
+			}
+
+		}
+		catch (FileNotFoundException e) {
+			System.out.println("config file not found");
+		} catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
 	
 	private static void AutoScoutLister(){
 		AutoscoutLister as = new AutoscoutLister();
 		autoScoutResults = new ArrayList<Car>();
 		autoScoutResults = as.Lister();
 	}
-	
+
+
 	private static void exportToTextFile(){
 		BufferedWriter writer = null;
 	    try {
@@ -39,7 +61,7 @@ public class Control {
 	        //writer.write("Hello world!");
 	        
 	        for (Car car: autoScoutResults) {
-	        	writer.write(car.toText()+"\n");
+	        	writer.write(car.toText("####")+"\n");
 	        }
 	        
 	        
