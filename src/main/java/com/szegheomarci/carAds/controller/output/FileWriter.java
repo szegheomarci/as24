@@ -18,10 +18,10 @@ public class FileWriter extends OutputWriter {
     @Override
     public void generateOutput(ArrayList<Car> results) {
         this.results = results;
-        this.format = (String) output.get("format");
+        this.format = (String) config.get("format");
         switch (format) {
             case "dsv":
-                separatedValuesFile((String) output.get("delimiter"));
+                separatedValuesFile((String) config.get("delimiter"));
                 break;
             case "json":
                 jsonFile();

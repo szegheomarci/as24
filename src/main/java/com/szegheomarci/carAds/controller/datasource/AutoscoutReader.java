@@ -19,6 +19,7 @@ public class AutoscoutReader extends DatasourceReader {
 
     public AutoscoutReader(String config) {
         super(config);
+        //datasource = yaml.load(config);
         this.urls = (List<String>) datasource.get("urls");
     }
 

@@ -29,7 +29,6 @@ public class CarAds {
 				outputWriter.generateOutput(ads);
 				TimeUnit.SECONDS.sleep(1);
 			}
-
 		}
 		catch (FileNotFoundException e) {
 			System.out.println("config file not found");

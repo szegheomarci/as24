@@ -10,4 +10,8 @@ output:
   - type: file
     format: json
   - type: kafka
-
+    config:
+      bootstrapServers: dory.srvs.cloudkafka.com:9094
+      username: dbetpols
+      password: 3AUQkXCP5qHyP0IVa1vdc1vG8V2RzXJL
+      topic: dbetpols-proba

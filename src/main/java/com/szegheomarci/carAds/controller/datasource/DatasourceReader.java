@@ -9,12 +9,13 @@ import java.util.Map;
 
 public abstract class DatasourceReader {
     protected Yaml yaml = new Yaml();
-    protected String config;
+    //protected String config;
     protected Map<String, Object> datasource;
     protected ArrayList<Car> results = new ArrayList<>();
     public DatasourceReader(String datasourceConfig){
-        this.config = datasourceConfig;
-        datasource = yaml.load(config);
+        //this.config = datasourceConfig;
+        //datasource = yaml.load(config);
+        datasource = yaml.load(datasourceConfig);
     }
     public abstract void readSource();
     public ArrayList<Car> getResults() {
