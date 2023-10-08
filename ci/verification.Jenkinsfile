@@ -4,7 +4,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven internal 3.8'
+        maven 'Maven - Jenkins internal'
     }
 
     stages {
