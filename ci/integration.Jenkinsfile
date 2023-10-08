@@ -14,14 +14,9 @@ pipeline {
                 echo "build number: ${env.BUILD_NUMBER}"
             }
         }
-        stage('Build jar') {
+        stage('fail test') {
             steps {
-                sh 'mvn package'
-            }
-        }
-        stage('Build docker image') {
-            steps {
-                sh "docker build -t carads:${version} ."
+                sh 'exit -1'
             }
         }
     }
