@@ -27,6 +27,15 @@ pipeline {
                 sh "docker build -t ${env.dockerId} ."
             }
         }
+        stage('Push Docker image to repository') {
+            steps {
+                script {
+                    docker.withRegistry('https://ghcr.io/', 'szegheomarci-github') {
+                        docker.image("szegheomarci/carads:${projectVersion}-${env.BUILD_NUMBER}").push()
+                    }
+                }
+            }
+        }
     }
     post {
         always {
@@ -39,8 +48,8 @@ pipeline {
                 if (isContainerRunning) {
                     echo "Stopping ${env.dockerId} container"
                     sh "docker ps -q --filter ancestor=${env.dockerId} | xargs docker stop"
-                }
-                /*// Remove the Docker container
+                }/*
+                // Remove the Docker container
                 echo "Deleting ${env.dockerId} container"
                 sh "docker ps -a | grep '${env.dockerId}' | awk '{print \$1}' | xargs docker rm"*/
                 // Remove the Docker image
