@@ -10,10 +10,17 @@ pipeline {
             steps {
                 script {
                     def pom = readMavenPom file: 'pom.xml'
-                    //def projectVersion = pom.version
-                    env.projectVersion = pom.version
-                    echo "Build version: ${env.projectVersion}-verif${env.BUILD_NUMBER}"
-                    env.dockerId = "szegheomarci/carads:" + env.projectVersion + "-" + env.BUILD_NUMBER
+                    def artifactId = pom.artifactId
+                    def projectVersion = pom.version
+                    //            must use /bin/bash, set Manage Jenkins --> Configure System --> Shell executable
+                    def dropCount = sh(script: '''
+                        IFS="-" read -ra version <<< $(git describe --tags)
+                        expr ${version[2]} + ${version[3]}
+                        ''', returnStdout: true).trim()
+                    def buildVersion = artifactId + "-v" + projectVersion + "-" + dropCount
+                    echo "Build version: ${buildVersion}"
+                    env.buildVersion = buildVersion
+                    env.dockerId = "szegheomarci/carads:" + projectVersion + "-" + dropCount
                 }
             }
         }
@@ -27,8 +34,26 @@ pipeline {
                 sh "docker build -t ${env.dockerId} ."
             }
         }
+        stage('Push Docker image to repository') {
+            steps {
+                script {
+                    docker.withRegistry('https://ghcr.io/', 'szegheomarci-github') {
+                        docker.image("${env.dockerId}").push()
+                    }
+                }
+            }
+        }
     }
     post {
+        success {
+            script {
+                // Tag the commit
+                sh "git tag -a ${env.buildVersion} -m 'Version ${env.buildVersion}'"
+
+                // Push the tag to the remote repository
+                sh "git push origin ${env.buildVersion}"
+            }
+        }
         always {
             script {
                 cleanWs()
@@ -39,8 +64,8 @@ pipeline {
                 if (isContainerRunning) {
                     echo "Stopping ${env.dockerId} container"
                     sh "docker ps -q --filter ancestor=${env.dockerId} | xargs docker stop"
-                }
-                /*// Remove the Docker container
+                }/*
+                // Remove the Docker container
                 echo "Deleting ${env.dockerId} container"
                 sh "docker ps -a | grep '${env.dockerId}' | awk '{print \$1}' | xargs docker rm"*/
                 // Remove the Docker image
