@@ -27,6 +27,15 @@ pipeline {
                 sh "docker build -t ${env.dockerId} ."
             }
         }
+        stage('Push Docker image to repository') {
+            steps {
+                script {
+                    docker.withRegistry('https://ghcr.io/', 'szegheomarci-github') {
+                        docker.image("szegheomarci/carads:${projectVersion}-${env.BUILD_NUMBER}").push()
+                    }
+                }
+            }
+        }
     }
     post {
         always {
