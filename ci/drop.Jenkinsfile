@@ -12,7 +12,6 @@ pipeline {
                     def pom = readMavenPom file: 'pom.xml'
                     def projectVersion = pom.version
                     echo "Project version: ${projectVersion}"
-                    env.projectVersion = projectVersion
                 }
             }
         }
@@ -23,17 +22,7 @@ pipeline {
         }
         stage('Build docker image') {
             steps {
-                echo "docker version: ${projectVersion}-${env.BUILD_NUMBER}"
-                sh "docker build -t szegheomarci/carads:0.3-${env.BUILD_NUMBER} ."
-            }
-        }
-        stage('Push Docker image to repository') {
-            steps {
-                script {
-                    docker.withRegistry('https://ghcr.io/', 'szegheomarci-github') {
-                        docker.image("szegheomarci/carads:0.3-${env.BUILD_NUMBER}").push()
-                    }
-                }
+                sh "docker build -t carads:${projectVersion}-${env.BUILD_NUMBER} ."
             }
         }
     }
