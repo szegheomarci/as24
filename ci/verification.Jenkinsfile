@@ -1,17 +1,26 @@
-def version = "1.0.${env.BUILD_NUMBER}"
-
 pipeline {
     agent any
+
+    environment {
+        // Define your Docker registry credentials ID from Jenkins credentials
+        DOCKER_CREDENTIALS = credentials('nexus')
+        // Define your Nexus Docker repository URL
+        NEXUS_DOCKER_REPO = 'https://192.168.0.160:8443/repository/docker-hosted'
+    }
 
     tools {
         maven 'Maven - Jenkins internal'
     }
 
     stages {
-        stage('Hello') {
+        stage('Read project version') {
             steps {
-                echo 'Hello World'
-                echo "build number: ${env.BUILD_NUMBER}"
+                script {
+                    def pom = readMavenPom file: 'pom.xml'
+                    def projectVersion = pom.version
+                    echo "Project version: ${projectVersion}"
+                    env.projectVersion = projectVersion
+                }
             }
         }
         stage('Build jar') {
@@ -21,7 +30,17 @@ pipeline {
         }
         stage('Build docker image') {
             steps {
-                sh "docker build -t carads:${version} ."
+                echo "docker version: ${projectVersion}-${env.BUILD_NUMBER}"
+                sh "docker build -t szegheomarci/carads:0.3-${env.BUILD_NUMBER} ."
+            }
+        }
+        stage('Push Docker image to Nexus') {
+            steps {
+                script {
+                    docker.withRegistry('https://ghcr.io/', 'szegheomarci-github') {
+                        docker.image("szegheomarci/carads:0.3-${env.BUILD_NUMBER}").push()
+                    }
+                }
             }
         }
     }
