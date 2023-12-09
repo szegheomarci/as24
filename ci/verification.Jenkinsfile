@@ -29,9 +29,19 @@ pipeline {
         }
     }
     post {
+        success {
+            script {
+                sh "pwd"
+                // Tag the commit
+                sh "git tag -a ${env.buildVersion} -m 'Version ${env.buildVersion}'"
+
+                // Push the tag to the remote repository
+                //sh "git push origin ${env.buildVersion}"
+            }
+        }
         always {
             script {
-                cleanWs()
+                //cleanWs()
                 // Check if the Docker container is running
                 def isContainerRunning = sh(script: "docker inspect -f {{.State.Running}} ${env.dockerId}", returnStatus: true) == 0
 
