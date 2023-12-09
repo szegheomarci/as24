@@ -10,7 +10,6 @@ pipeline {
             steps {
                 script {
                     def pom = readMavenPom file: 'pom.xml'
-                    //def projectVersion = pom.version
                     env.projectVersion = pom.version
                     echo "Build version: ${env.projectVersion}-verif${env.BUILD_NUMBER}"
                     env.dockerId = "szegheomarci/carads:" + env.projectVersion + "-" + env.BUILD_NUMBER
@@ -29,9 +28,20 @@ pipeline {
         }
     }
     post {
+        success {
+            script {
+                sh "pwd"
+                sh "ls -l"
+                // Tag the commit
+                sh "git tag -a ${env.projectVersion} -m 'Version ${env.projectVersion}'"
+
+                // Push the tag to the remote repository
+                //sh "git push origin ${env.buildVersion}"
+            }
+        }
         always {
             script {
-                cleanWs()
+                //cleanWs()
                 // Check if the Docker container is running
                 def isContainerRunning = sh(script: "docker inspect -f {{.State.Running}} ${env.dockerId}", returnStatus: true) == 0
 
