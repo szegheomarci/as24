@@ -10,7 +10,6 @@ pipeline {
             steps {
                 script {
                     def pom = readMavenPom file: 'pom.xml'
-                    //def projectVersion = pom.version
                     env.projectVersion = pom.version
                     echo "Build version: ${env.projectVersion}-verif${env.BUILD_NUMBER}"
                     env.dockerId = "szegheomarci/carads:" + env.projectVersion + "-" + env.BUILD_NUMBER
@@ -27,8 +26,42 @@ pipeline {
                 sh "docker build -t ${env.dockerId} ."
             }
         }
+        stage('Tag on Success') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
+            steps {
+                script {
+                    sh 'cat .git/config'
+
+                /*
+                    // Create a directory for tagging
+                    dir('tagging_workspace') {
+                        // Initialize Git in the new directory
+                        sh 'git init'
+
+                        // Tag the commit
+                        sh "git tag -a ${versionNumber} -m 'Version ${versionNumber}'"
+
+                        // Push the tag to the remote repository
+                        sh "git push origin ${versionNumber}"
+                    }*/
+                }
+            }
+        }
     }
     post {
+        success {
+            script {
+                sh "pwd"
+                sh "ls -l"
+                // Tag the commit
+                sh "git tag -a ${env.projectVersion} -m 'Version ${env.projectVersion}'"
+
+                // Push the tag to the remote repository
+                //sh "git push origin ${env.buildVersion}"
+            }
+        }
         always {
             script {
                 cleanWs()
