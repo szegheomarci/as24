@@ -10,7 +10,6 @@ pipeline {
             steps {
                 script {
                     def pom = readMavenPom file: 'pom.xml'
-                    //def projectVersion = pom.version
                     env.projectVersion = pom.version
                     echo "Build version: ${env.projectVersion}-verif${env.BUILD_NUMBER}"
                     env.dockerId = "szegheomarci/carads:" + env.projectVersion + "-" + env.BUILD_NUMBER
@@ -25,6 +24,43 @@ pipeline {
         stage('Build docker image') {
             steps {
                 sh "docker build -t ${env.dockerId} ."
+            }
+        }
+        stage('Tag on Success') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
+            steps {
+                script {
+                    sh 'cat .git/config'
+
+                    sh 'git reset --hard HEAD^'
+
+                    sh("git config user.name 'Jenkins'")
+                    sh("git config user.email 'jenkins@szegheomarci.com'")
+
+                    // Tag the commit
+                    sh "git tag -a carads-v1.0.5-5 -m 'Version carads-v1.0.5-5'"
+
+                    // Push the tag to the remote repository
+                    sshagent(['gerrit_user']) {
+                        sh("git push origin carads-v1.0.5-5")
+                    }
+                    //sh "git push origin carads-v1.0.5-5"
+
+                /*
+                    // Create a directory for tagging
+                    dir('tagging_workspace') {
+                        // Initialize Git in the new directory
+                        sh 'git init'
+
+                        // Tag the commit
+                        sh "git tag -a ${versionNumber} -m 'Version ${versionNumber}'"
+
+                        // Push the tag to the remote repository
+                        sh "git push origin ${versionNumber}"
+                    }*/
+                }
             }
         }
     }
