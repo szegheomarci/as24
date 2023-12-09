@@ -10,7 +10,6 @@ pipeline {
             steps {
                 script {
                     def pom = readMavenPom file: 'pom.xml'
-                    //def projectVersion = pom.version
                     env.projectVersion = pom.version
                     echo "Build version: ${env.projectVersion}-verif${env.BUILD_NUMBER}"
                     env.dockerId = "szegheomarci/carads:" + env.projectVersion + "-" + env.BUILD_NUMBER
