@@ -17,9 +17,8 @@ pipeline {
                         IFS="-" read -ra version <<< $(git describe --tags)
                         expr ${version[2]} + ${version[3]}
                         ''', returnStdout: true).trim()
-                    def buildVersion = artifactId + "-v" + projectVersion + "-" + dropCount
-                    echo "Build version: ${buildVersion}"
-                    env.buildVersion = buildVersion
+                    env.buildVersion = artifactId + "-v" + projectVersion + "-" + dropCount
+                    echo "Build version: ${env.buildVersion}"
                     env.dockerId = "szegheomarci/carads:" + projectVersion + "-" + dropCount
                 }
             }
@@ -43,17 +42,27 @@ pipeline {
                 }
             }
         }
-    }
-    post {
-        success {
-            script {
-                // Tag the commit
-                sh "git tag -a ${env.buildVersion} -m 'Version ${env.buildVersion}'"
+        stage('Tag on Success') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
+            steps {
+                script {
+                    sh("git config user.name 'Jenkins'")
+                    sh("git config user.email 'jenkins@szegheomarci.com'")
 
-                // Push the tag to the remote repository
-                sh "git push origin ${env.buildVersion}"
+                    // Tag the commit
+                    sh "git tag -a ${env.buildVersion} -m 'Version ${env.buildVersion}'"
+
+                    // Push the tag to the remote repository
+                    sshagent(['gerrit_user']) {
+                        sh("git push origin ${env.buildVersion}")
+                    }
+                }
             }
         }
+    }
+    post {
         always {
             script {
                 cleanWs()
