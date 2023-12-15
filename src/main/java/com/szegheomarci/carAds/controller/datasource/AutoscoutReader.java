@@ -39,7 +39,7 @@ public class AutoscoutReader extends DatasourceReader {
             while (retryCount < maxRetries && !success) {
                 page = readPage(url + pagenum);
                 try {
-                    numResults = Integer.valueOf(page.select("div.ListHeader_top__jY34N").first().selectFirst("h1").selectFirst("span").text().replaceAll("[^\\d.]", ""));
+                    numResults = Integer.valueOf(page.select("div.ListHeader_top__N6YWA").first().selectFirst("h1").selectFirst("span").text().replaceAll("[^\\d.]", ""));
                     success = true;
                 } catch (NullPointerException e) {
                     retryCount++;
@@ -103,9 +103,9 @@ public class AutoscoutReader extends DatasourceReader {
                 //subtitle
                 car.setSubtitle(ad.select("span").first().text());
                 //price
-                car.setPrice(ad.select("p.Price_price__WZayw").first().text());
+                car.setPrice(ad.select("p.Price_price__APlgs").first().text());
 
-                Document details = Jsoup.parseBodyFragment(item.select("div.VehicleDetailTable_container__mUUbY").first().html());
+                Document details = Jsoup.parseBodyFragment(item.select("div.VehicleDetailTable_container__XhfV1").first().html());
                 Elements listItems = details.getElementsByTag("span");
                 Iterator<Element> listIterator = listItems.iterator();
                 //odo
@@ -119,13 +119,13 @@ public class AutoscoutReader extends DatasourceReader {
                 //engine
                 car.setEngine(listIterator.next().text());
 
-                Elements dealerdata = item.select("div.SellerInfo_wrapper__mLtya");
+                Elements dealerdata = item.select("div.SellerInfo_wrapper__XttVo");
                 if(!dealerdata.isEmpty()){
-                    car.setDealer(dealerdata.first().select("span.SellerInfo_name__yjUE6").text() + "");
+                    car.setDealer(dealerdata.first().select("span.SellerInfo_name__nR9JH").text() + "");
                     car.setZipCity(dealerdata.first().select("span").last().text() + "");
                 } else {
                     car.setDealer("private");
-                    car.setZipCity(ad.select("span.SellerInfo_private__JCxcm").first().text().substring(16));
+                    car.setZipCity(ad.select("span.SellerInfo_private__THzvQ").first().text().substring(16));
                 }
                 results.add(car);
                 //System.out.println(car.toString());
