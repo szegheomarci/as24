@@ -18,12 +18,13 @@ pipeline {
         }
         stage('Build jar') {
             steps {
-                sh 'mvn package'
+                sh 'mvn clean compile assembly:single'
             }
         }
         stage('Build docker image') {
             steps {
                 sh "docker build -t ${env.dockerId} ."
+                sleep(time:60,unit:"SECONDS")
             }
         }
     }
