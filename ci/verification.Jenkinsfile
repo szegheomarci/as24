@@ -24,6 +24,7 @@ pipeline {
         stage('Build docker image') {
             steps {
                 sh "docker build -t ${env.dockerId} ."
+                sleep(time:60,unit:"SECONDS")
             }
         }
     }
