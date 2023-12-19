@@ -4,20 +4,21 @@ import com.szegheomarci.carAds.controller.datasource.DatasourceReader;
 import com.szegheomarci.carAds.controller.output.OutputWriter;
 import com.szegheomarci.carAds.model.Car;
 
-import java.io.BufferedWriter;
-import java.io.File;
+import java.io.InputStream;
+import java.util.Properties;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 
 public class CarAds {
-	private static ArrayList<Car> autoScoutResults;
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
+		if (args.length > 0 && args[0].equalsIgnoreCase("version")) {
+			String version = getVersionFromPom();
+			System.out.println("Version: " + version);
+			return;
+		}
 
 		// read the configuration
 		try {
@@ -35,44 +36,17 @@ public class CarAds {
 		} catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-
     }
-	
-	private static void AutoScoutLister(){
-		AutoscoutLister as = new AutoscoutLister();
-		autoScoutResults = new ArrayList<Car>();
-		autoScoutResults = as.Lister();
-	}
 
-
-	private static void exportToTextFile(){
-		BufferedWriter writer = null;
-	    try {
-	        //create a temporary file
-	        String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-	        File logFile = new File("./" + timeLog + "as");
-
-	        // This will output the full path where the file will be written to...
-	        System.out.println(logFile.getCanonicalPath());
-
-	        writer = new BufferedWriter(new FileWriter(logFile));
-	        //writer.write("Hello world!");
-	        
-	        for (Car car: autoScoutResults) {
-	        	writer.write(car.toText("####")+"\n");
-	        }
-	        
-	        
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    } finally {
-	        try {
-	            // Close the writer regardless of what happens...
-	            writer.close();
-	        } catch (Exception e) {
-	        }
-	    }
+	private static String getVersionFromPom() {
+		try (InputStream input = CarAds.class.getClassLoader().getResourceAsStream("project.properties")) {
+			Properties properties = new Properties();
+			properties.load(input);
+			return properties.getProperty("version");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Version not available";
+		}
 	}
 
 }
