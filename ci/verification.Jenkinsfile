@@ -24,6 +24,7 @@ pipeline {
         stage('Build docker image') {
             steps {
                 sh "docker build -t ${env.dockerId} ."
+                sh "sleep 120"
             }
         }
     }
@@ -44,7 +45,7 @@ pipeline {
                 sh "docker ps -a | grep '${env.dockerId}' | awk '{print \$1}' | xargs docker rm"*/
                 // Remove the Docker image
                 echo "Deleting ${env.dockerId} image"
-                sh "docker images | grep \$(echo '${env.dockerId}' | sed 's|:|\\\\\\s*|') | awk '{print \$3}' | xargs docker rmi -f"
+                //sh "docker images | grep \$(echo '${env.dockerId}' | sed 's|:|\\\\\\s*|') | awk '{print \$3}' | xargs docker rmi -f"
             }
         }
     }
