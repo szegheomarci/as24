@@ -12,6 +12,7 @@ To configure the app, create your `./config/config.yaml` file.
 
 *Example*
 ```yaml
+runmode: once
 datasource:
   reader: AUTOSCOUTREADER
   urls:
@@ -30,6 +31,17 @@ output:
       password: yourPa$$word
       topic: your-topic-name
 ```
+### Run mode
+Optional. Useful only when running as Docker container.
+The following values are available:
+* `once`: The collection is run once, after that the container exits.
+* `once_and_standby`: The collection is run once, after that the container keeps running.
+  New collection can be initiated by running the `collect.sh` script in the container.
+  This is useful for scheduling collection jobs.
+* `standby`: The collection is not run, but the container keeps running.
+  A collection can be initiated by running the `collect.sh` script in the container.
+  This is useful for scheduling collection jobs.
+
 ### Datasource
 Only one datasource can be defined in the config file.  
 Only AUTOSCOUTREADER is supported.
