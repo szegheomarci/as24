@@ -26,7 +26,14 @@ pipeline {
                 sh "docker build -t ${env.dockerId} ."
             }
         }
-    }
+        stage('Test docker image') {
+            steps {
+                sh """docker run -d ${env.dockerId} \
+                        -v ./config:/config
+                """
+            }
+        }
+    }/*
     post {
         always {
             script {
@@ -38,14 +45,14 @@ pipeline {
                 if (isContainerRunning) {
                     echo "Stopping ${env.dockerId} container"
                     sh "docker ps -q --filter ancestor=${env.dockerId} | xargs docker stop"
-                }
+                }   */
                 /*// Remove the Docker container
                 echo "Deleting ${env.dockerId} container"
                 sh "docker ps -a | grep '${env.dockerId}' | awk '{print \$1}' | xargs docker rm"*/
                 // Remove the Docker image
-                echo "Deleting ${env.dockerId} image"
+         /*       echo "Deleting ${env.dockerId} image"
                 sh "docker images | grep \$(echo '${env.dockerId}' | sed 's|:|\\\\\\s*|') | awk '{print \$3}' | xargs docker rmi -f"
             }
         }
-    }
+    }*/
 }
