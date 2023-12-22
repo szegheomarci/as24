@@ -26,6 +26,13 @@ pipeline {
                 sh "docker build -t ${env.dockerId} ."
             }
         }
+        stage('Test docker image') {
+            steps {
+                sh """docker run -d ${env.dockerId} \
+                        -v ./config:/config
+                """
+            }
+        }
     }
     post {
         always {
