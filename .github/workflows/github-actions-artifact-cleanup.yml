@@ -1,0 +1,14 @@
+name: Artifact Cleanup
+run-name: ${{ github.actor }} is cleaning up artifact repository
+on: [push]
+jobs:
+  GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+      - uses: windyakin/delete-package-versions-keep-latest@v1
+        with:
+          owner: szegheomarci
+          repo: carads
+          package-name: carads
+          keep-latest-package-versions: 5
