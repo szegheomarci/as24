@@ -32,5 +32,60 @@ pipeline {
                 }
             }
         }
+        stage('Clone repository') {
+            steps {
+                script {
+                    git branch: 'main',
+                        credentialsId: 'gerrit_user',
+                        url: 'ssh://szm-Jenkins@review.gerrithub.io:29418/szegheomarci/car-ads'
+                    sh "git config user.name 'Jenkins'"
+                    sh "git config user.email 'jenkins@szegheomarci.com'"
+                }
+            }
+        }
+        stage('Tag released commit') {
+            steps {
+                script {
+                    sh "git reset --hard tags/carAds-v${params.DROP_VERSION}"
+                    // Tag the commit
+                    sh "git tag -a ${RELEASE_VERSION} -m 'Released version ${RELEASE_VERSION}'"
+
+                    // Push the tag to the remote repository
+                    sshagent(['gerrit_user']) {
+                        sh("git push origin ${RELEASE_VERSION}")
+                    }
+                }
+            }
+        }
+        stage('Increment version') {
+            steps {
+                script {
+                    sh "git reset --hard origin/main"
+                    sh "mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} versions:commit"
+                    sh "git add . && git commit -m 'Automatic version increase.'"
+                    sshagent(['gerrit_user']) {
+                        sh("git push origin HEAD:refs/heads/main")
+                    }
+                }
+            }
+        }
+        stage('Tag incremented version') {
+            steps {
+                script {
+                    def pom = readMavenPom file: 'pom.xml'
+                    def artifactId = pom.artifactId
+                    def projectVersion = pom.version
+                    def tagVersion = artifactId + "-v" + projectVersion + "-0"
+
+                    // Tag the commit
+                    sh "git tag -a ${tagVersion} -m 'Version ${tagVersion}'"
+
+                    // Push the tag to the remote repository
+                    sshagent(['gerrit_user']) {
+                        sh("git push origin ${tagVersion}")
+                    }
+                }
+            }
+        }
     }
 }
