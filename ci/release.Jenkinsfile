@@ -1,6 +1,9 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven - Jenkins internal'
+    }
     parameters {
         string(name: "DROP_VERSION", defaultValue: "", trim: true, description: "Dropped version to release")
     }
