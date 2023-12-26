@@ -52,7 +52,7 @@ pipeline {
                     sh "git reset --hard tags/carAds-v${params.DROP_VERSION}"
                     def pom = readMavenPom file: 'pom.xml'
                     def artifactId = pom.artifactId
-                    def tagVersion = artifactId + "-v" + ${RELEASE_VERSION} + "-released"
+                    def tagVersion = artifactId + "-v" + RELEASE_VERSION + "-released"
                     // Tag the commit
                     sh "git tag -a '${tagVersion}' -m 'Released version ${RELEASE_VERSION}'"
 
@@ -91,6 +91,13 @@ pipeline {
                         sh("git push origin ${tagVersion}")
                     }
                 }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                cleanWs()
             }
         }
     }
