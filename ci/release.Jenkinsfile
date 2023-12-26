@@ -51,7 +51,7 @@ pipeline {
                 script {
                     sh "git reset --hard tags/carAds-v${params.DROP_VERSION}"
                     // Tag the commit
-                    sh "git tag -a ${RELEASE_VERSION} -m 'Released version ${RELEASE_VERSION}'"
+                    sh "git tag -a 'caraAds-v${RELEASE_VERSION}-released' -m 'Released version ${RELEASE_VERSION}'"
 
                     // Push the tag to the remote repository
                     sshagent(['gerrit_user']) {
