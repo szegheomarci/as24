@@ -7,7 +7,9 @@ jobs:
     steps:
       - name: Run cleanup
         uses: actions/delete-package-versions@v4
-        with: 
+        with:          
+          owner: 'github'
           package-name: 'carads'
           package-type: 'container'
+          token: ${{ secrets.GITHUB_PAT }}
           min-versions-to-keep: 5
