@@ -1,0 +1,13 @@
+name: Car Ads packages cleanup
+run-name: carAds packages cleanup
+on: [push]
+jobs:
+  Cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run cleanup
+        uses: actions/delete-package-versions@v4
+        with:          
+          package-name: 'carads'
+          package-type: 'container'
+          min-versions-to-keep: 5
