@@ -76,7 +76,7 @@ pipeline {
                 }
                 // Remove the Docker container
                 echo "Deleting ${env.dockerId} container"
-                sh "docker ps -a | grep '${env.dockerId}' | awk '{print \$1}' | xargs docker rm"
+                sh "docker ps -a | grep '${env.dockerId}' | awk '{print \$1}' | xargs docker rm -f || true"
                 // Remove the Docker image
                 echo "Deleting ${env.dockerId} image"
                 sh "docker images | grep \$(echo '${env.dockerId}' | sed 's|:|\\\\\\s*|') | awk '{print \$3}' | xargs docker rmi -f"
