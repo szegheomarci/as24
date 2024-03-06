@@ -66,17 +66,19 @@ pipeline {
         always {
             script {
                 cleanWs()
-                // Check if the Docker container is running
-                def isContainerRunning = sh(script: "docker inspect -f {{.State.Running}} ${env.dockerId}", returnStatus: true) == 0
+                def isContainerValid = sh(script: "docker ps -a | grep '${env.dockerId}'", returnStatus: true) == 0
+                if (isContainerValid) {
+                    def isContainerRunning = sh(script: "docker inspect -f {{.State.Running}} ${env.dockerId}", returnStatus: true) == 0
+                    // Stop the Docker container if it's running
+                    if (isContainerRunning) {
+                        echo "Stopping ${env.dockerId} container"
+                        sh "docker ps -q --filter ancestor=${env.dockerId} | xargs docker stop"
+                    }
 
-                // Stop the Docker container if it's running
-                if (isContainerRunning) {
-                    echo "Stopping ${env.dockerId} container"
-                    sh "docker ps -q --filter ancestor=${env.dockerId} | xargs docker stop"
+                    // Remove the Docker container
+                    echo "Deleting ${env.dockerId} container"
+                    sh "docker ps -a | grep '${env.dockerId}' | awk '{print \$1}' | xargs docker rm -f"
                 }
-                // Remove the Docker container
-                echo "Deleting ${env.dockerId} container"
-                sh "docker ps -a | grep '${env.dockerId}' | awk '{print \$1}' | xargs docker rm -f || true"
                 // Remove the Docker image
                 echo "Deleting ${env.dockerId} image"
                 sh "docker images | grep \$(echo '${env.dockerId}' | sed 's|:|\\\\\\s*|') | awk '{print \$3}' | xargs docker rmi -f"
