@@ -60,7 +60,7 @@ public class AutoscoutReader extends DatasourceReader {
             if(numResults % 20 > 0) {loops++;}
             while (pagenum < loops) {
                 pagenum++;
-                System.out.println("Processing page " + pagenum);
+                System.out.println("Processing page: " + pagenum);
                 processPage(readPage(url + pagenum));
             }
         }
