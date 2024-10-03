@@ -39,7 +39,8 @@ public class AutoscoutReader extends DatasourceReader {
             while (retryCount < maxRetries && !success) {
                 page = readPage(url + pagenum);
                 try {
-                    numResults = Integer.valueOf(page.select("div.ListHeader_title_with_sort__Pf4Zw").first().selectFirst("h1").selectFirst("span").text().replaceAll("[^\\d.]", ""));
+                    //numResults = Integer.valueOf(page.select("div.ListHeader_title_with_sort__Pf4Zw").first().selectFirst("h1").selectFirst("span").text().replaceAll("[^\\d.]", ""));
+                    numResults = Integer.valueOf(page.select("div.ListHeader_title_with_sort__Pf4Zw").first().selectFirst("h1").text().split(" ")[0]);
                     success = true;
                 } catch (NullPointerException e) {
                     retryCount++;
