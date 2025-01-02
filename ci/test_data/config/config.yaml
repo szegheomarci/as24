@@ -2,7 +2,7 @@ runmode: once
 datasource:
   reader: AUTOSCOUTREADER
   urls:
-    - "https://szegheomarci.w3spaces.com/chaz3/carads/246dino.html?page="
+    - "https://szegheomarci.github.io/chaz3/testpages/dino.html?page="
 output:
   - type: file
     format: dsv
